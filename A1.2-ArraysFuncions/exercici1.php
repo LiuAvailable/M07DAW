@@ -3,7 +3,7 @@
 $array_num = [5,6,7,8,9,10];
 print_r(factorialArray($array_num));
 
-function factorialArray($array_num){
+function factorialArray($array_num):array|bool{
 	//si es un array procedeix a calcular el factorial
 	//en cas contrari retorna fals
 	if(is_array($array_num)){
