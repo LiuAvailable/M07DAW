@@ -96,7 +96,3 @@ function calcOperation(&$valor, &$pantalla){
         </form>
     </div>
 </body>
-<?php 
-
-
-?>
