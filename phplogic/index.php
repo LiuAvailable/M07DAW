@@ -1,16 +1,22 @@
 <?php
+/**
+ * declaro les sessions si no existeixen
+ */
 session_start();
 $arr = get_defined_functions();
 $_SESSION['totes']=$arr['internal'];
 if(!isset($_SESSION['adivinades'])){$_SESSION['adivinades'] = [];}
-if(!isset($_SESSION['paraules'])){$_SESSION['paraules'] = [];}
+if(!isset($_SESSION['funcions'])){$_SESSION['funcions'] = [];}
 if(!isset($_SESSION['data'])){$_SESSION['data'] = [];}
+if(!isset($_SESSION['error'])){$_SESSION['error'] = "";}
+
 
 randomLettersFromDate();
-#if(!isset($_SESSION['lletres'])){getLetters(date("Ymd"));}
-#else if ($_SESSION['lletres'] == []) {getLetters(date("Ymd"));}
 if(isset($_GET['neteja'])){$_SESSION['adivinades']=[];}
-
+if(isset($_GET['sol'])){print_r($_SESSION['funcions']);} # printo les solucions si les demana
+/** 
+ * retorna les paraules trobades
+ */
 function mostrarFuncionsTrobades(){
     if (sizeof($_SESSION['adivinades'])>0) {
         $trobades = "";
@@ -20,21 +26,25 @@ function mostrarFuncionsTrobades(){
         return " (".rtrim($trobades, ", ").")";
     } 
 }
-
-function getLetters(int $data){
+/**
+ * donada una data crea una seed i retorna 7 lletres que formin minm 3 funcions
+ */
+function getLetters($data){
     $minParaules = null;
-    srand($_SESSION['data']);
+    srand($data);
     $funcions = get_defined_functions()['internal'];
     while ($minParaules == null) {
-        $lletres = substr(str_shuffle("abcdefghijklmnopqrstuvwxyz_"), 0,7);
-        $lletra = substr($lletres, 4,1);
-        $pattern = "/^[".strval($lletres)."]*".$lletra."[".strval($lletres)."]*$/";
+        $lletres = substr(str_shuffle("abcdefghijklmnopqrstuvwxyz_"), 0,7); # Barreja les lletres
+        $lletra = substr($lletres, 3,1);
+        $_SESSION['lletra'] = $lletra;
+        $pattern = "/^[".strval($lletres)."]*".$lletra."[".strval($lletres)."]*$/"; # Regex -> lletra central i no diferent a les 7 lletres 
         $minParaules = checkFunctions($pattern, $funcions);
     }
-    print_r($_SESSION['funcions']);
     return $lletres;
 }
-
+/**
+ * Comprova si les lletres poden formar minim 3 paraules
+ */
 function checkFunctions($pattern, $funcions)
 {
     $_SESSION['funcions'] = array();
@@ -48,19 +58,26 @@ function checkFunctions($pattern, $funcions)
     }
     return null;
 }
+/**
+ * Si entren una data canvia les lletres
+ * Sino agafa la del dia d'avui
+ */
 function randomLettersFromDate(){
     if(isset($_GET['data'])){
         $_SESSION['data'] = $_GET['data'];
-    }else{
-        if ($_SESSION['data']!=date("Ymd")) {
-            $_SESSION['data'] = date("Ymd");
-        }
+        $_SESSION['lletres'] = getLetters($_SESSION['data']);
     }
-    $_SESSION['lletres'] = getLetters($_SESSION['data']);
+    if($_SESSION['data'] != []){
+        $_SESSION['lletres'] = getLetters($_SESSION['data']);
+    }else{
+        $_SESSION['lletres'] = getLetters(date("Ymd"));
+    }
 }
 
+/**
+ * Dibuixa les lletres en l'html
+ */
 function printLetters(){
-    #$arr_letters = getLetters();
     for ($i=0; $i < 7; $i++) { 
         ?>
         <li class="hex">
@@ -69,6 +86,17 @@ function printLetters(){
             </div>
         </li>
         <?php
+    }
+}
+
+function mostrarErrors(){
+    if ($_SESSION['error']!="") {
+        ?>
+        <div class="container-notifications">
+            <p class="hide" id="message" style=""><?php echo $_SESSION['error']; ?></p>
+        </div>
+        <?php
+        $_SESSION['error']="";
     }
 }
 ?>
@@ -88,11 +116,8 @@ function printLetters(){
         <a href=""><img src="logo.png" height="54" class="logo" alt="PHPlògic"></a>
     </h1>
 
-
-    <!--<div class="container-notifications">
-        <p class="hide" id="message" style="">MISSATGE D'ERROR</p>
-    </div>-->
-    <form class="main" action="test.php" method="POST">
+    <?php mostrarErrors();?>
+    <form class="main" action="proces.php" method="POST">
         <div class="cursor-container">
             <p id="input-word"><span id="test-word"></span><span id="cursor">|</span></p>
         </div>
@@ -150,7 +175,7 @@ function printLetters(){
     window.onload = () => {
         // Afegeix funcionalitat al click de les lletres
         Array.from(document.getElementsByClassName("hex-link")).forEach((el) => {
-            el.onclick = ()=>{afegeixLletra(el.getAttribute("data-lletra"))}
+            el.onclick = ()=>{afegeixLletra(el.getAttribute("data-lletra"));}
         })
 
         setTimeout(amagaError, 2000)
