@@ -1,5 +1,12 @@
 <?php
 session_start();
+/**
+ * elimina la sessio al passar un 1 min
+ */
+if ($_SESSION['time']<time()-60) {
+    session_unset();
+    header('Location: index.php', true, 302);
+}
 #time();
 if ($_SESSION['nom'] == null) {
     header('Location: index.php', true, 303);
@@ -48,8 +55,8 @@ function showConnections() : void{
         <h1>Benvingut!</h1>
         <div>Hola <?php echo $_SESSION['nom']; ?>, les teves darreres connexions són:</div>
         <?php showConnections(); ?>
-        <form action="index.php" method="post">
-            <button>Tanca la sessió</button>
+        <form action="process.php" method="post">
+            <button name="method" value="logout">Tanca la sessió</button>
         </form>
     </div>
 </div>

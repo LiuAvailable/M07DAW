@@ -1,4 +1,42 @@
-
+<?php 
+    /**
+     * comprova si hi ha un error de login per GET
+     */
+    function login_error(){
+        if(isset($_GET['login_error'])){
+            if ($_GET['login_error']=='incorrect_user') {writeError("l'usuari no existeix");}
+            if ($_GET['login_error']=='incorrect_pass') {writeError("la contrassenya no és correcte");}
+            if ($_GET['login_error']=='data') {writeError("falten dades!!");}
+        }
+    }
+    /**
+     * comprova si hi ha un error de registre per GET
+     */
+    function reg_error(){
+        if (isset($_GET['reg_error'])){
+            if ($_GET['reg_error']=='user_exists') {writeError("l'usuari ja existeix");}
+            if ($_GET['reg_error']=='data') {writeError("falten dades!!");}
+            # js per mostrar la part de registre de la web
+            ?><script type="text/javascript">
+                document.querySelector('.container').classList.add("right-panel-active")
+            </script>
+            <?php
+        }
+    }
+    /**
+     * afegeix l'html de l'error rebut
+     * 
+     * @param string $error -> missatge d'error
+     */
+    function writeError($error){
+        ?>  
+        <div class="error">
+            <i class="fa-solid fa-triangle-exclamation"></i>
+            <p><?php echo $error ?></p>
+        </div>
+        <?php
+    }
+?>
 
 <!DOCTYPE html>
 <html lang="ca">
@@ -7,7 +45,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link href="style.css" rel="stylesheet">
-
+    <script src="https://kit.fontawesome.com/02053ec565.js"></script>
 </head>
 <body>
     <div class="container" id="container">
@@ -19,19 +57,20 @@
                 <input type="text" placeholder="Nom" name="nom"/>
                 <input type="email" placeholder="Correu electronic" name="email"/>
                 <input type="password" placeholder="Contrasenya" name="pass"/>
-                <!--<button>Registra't</button>-->
-                <input type="submit" name="" value="AAAA">
+                <button>Registra't</button>
             </form>
+            <?php reg_error(); ?>
         </div>
         <div class="form-container sign-in-container">
             <form action="process.php" method="post">
                 <h1>Inicia la sessió</h1>
-                <span>introdueix les teves credencials</span>
+                <span  >introdueix les teves credencials</span>
                 <input type="hidden" name="method" value="signin"/>
                 <input type="email" placeholder="Correu electronic" name="email"/>
                 <input type="password" placeholder="Contrasenya" name="pass"/>
                 <button>Inicia la sessió</button>
             </form>
+            <?php login_error(); ?>
         </div>
         <div class="overlay-container">
             <div class="overlay">
