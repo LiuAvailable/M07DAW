@@ -67,11 +67,11 @@ function singup() : void{
                 create_sessions($_POST['email']);
                 header('Location: hola.php', true, 302);
             }else{ # else return error already registered
-                header('Location: http://localhost:8080/helloworld/M07DAW/examen/prova-uf1?reg_error=user_exists', true, 303);
+                header('Location: index.php?reg_error=user_exists', true, 303);
             }
         }else{
             $_SESSION['error'] = "falten dades";
-            header('Location: http://localhost:8080/helloworld/M07DAW/examen/prova-uf1?reg_error=data', true, 303);
+            header('Location: index.php?reg_error=data', true, 303);
         }
     }
 
@@ -102,14 +102,14 @@ function login() : void{
                     header('Location: hola.php', true, 302);
                 }else{#incorrect pass
                 connectionLogs($_POST['email'], "incorrect_password");
-                header('Location: http://localhost:8080/helloworld/M07DAW/examen/prova-uf1?login_error=incorrect_pass', true, 303);
+                header('Location: index.php?login_error=incorrect_pass', true, 303);
                 }         
             }else{ #user dont exist
             #connectionLogs($_POST['email'], "incorrect_user");
-            header('Location: http://localhost:8080/helloworld/M07DAW/examen/prova-uf1?login_error=incorrect_user', true, 303);
+            header('Location: index.php?login_error=incorrect_user', true, 303);
             }
         }else{ # falten dades
-            header('Location: http://localhost:8080/helloworld/M07DAW/examen/prova-uf1?login_error=data', true, 303);
+            header('Location: index.php?login_error=data', true, 303);
         }
     }
 }
