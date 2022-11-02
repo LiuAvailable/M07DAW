@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title></title>
+	<link rel="stylesheet" type="text/css" href="css/style.css">
+	<script type="module" src="js/app.js"></script>
+</head>
+<body>
+	<label>Num factura: </label><label name="codi"></label><br>
+	<label>Article: </label><select></select><button id="add">+</button><br>
+	<ul>
+		<li>
+			<label>Codi</label>
+			<label>Nom</label>
+			<label>Quantitat</label>
+			<label>Preu</label>
+			<label>Total</label>
+		</li>
+	</ul>
+	<section>
+		<p>Base Imposable</p><p id="BI"></p>
+		<p>IVA(21%)</p><p id="IVA"></p>
+		<p>Total</p><p id="total"></p>
+	</section>
+	<section class="recoverBill">
+		<input type="text" name="recoverBill">
+		<button id="recoverBill">Buscar</button>
+	</section>
+</body>
+</html>
