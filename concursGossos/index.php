@@ -1,5 +1,6 @@
 <?php
 session_start();
+require_once('class/fase.php');
 
 # -----------------
 # CONNECT TO DATA BASE
@@ -27,9 +28,79 @@ function getData(){
         return $_SESSION['date'];
     }else{return date("Y-m-d");}
 }
-function actualFase(){
+function actualFase(): null | fase{
     global $conn;
-    
+
+    $data = getData();
+
+    $sql = $conn->prepare("select * from fase where inici<= ? and fi >= ?");
+    $sql->execute([$data, $data]);
+    $result = $sql->fetch();
+    if($result == null){
+        return null;
+    }else{
+        return new fase($result['num_fase'], $result['inici'],$result['fi']);
+    }
+}
+function printHTML(){
+    $fase = actualFase();
+
+    if($fase == null){
+        ?>
+        <div class="wrapper">
+            <header>No hi ha cap fase iniciada</header>
+        </div>
+        <?php
+    }else{
+        ?>
+        <div class="wrapper">
+            <header>Votació popular del Concurs Internacional de Gossos d'Atura 2023-FASE <?php echo $fase->numFase;?></header>
+            <p class="info"> Podeu votar fins el dia <?php echo $fase->fi;?></p>
+
+            <p class="warning"> Ja has votat al gos MUSCLO. Es modificarà la teva resposta</p>
+            <div class="poll-area">
+                <?php printGossosAVotarHTML($fase);?>
+                <!--<label>
+                    <div class="row">
+                        <div class="column">
+                            <div class="right">
+                            <span class="circle"></span>
+                            <span class="text">Musclo</span>
+                            </div>
+                            <img class="dog"  alt="Musclo" src="img/g1.png">
+                        </div>
+                    </div>
+                </label>-->
+            </div>
+        </div>
+        <?php
+    }
+}
+function printGossosAVotarHTML(Fase $fase){
+    global $conn;
+
+    $sql = $conn->prepare("select f.gos_name,f.num_fase,g.img from gossos_fase as f join gos as g on f.gos_name = g.nom where f.num_fase = ?");
+    $sql->execute([$fase->numFase]);
+    $result = $sql->fetch();
+    if ($result == null){
+        echo "<p>No s'ha votat en les fases anteriors<p>";
+    }else{
+        foreach($result as $row){
+            ?>
+            <label id="<?php echo  $row['gos_name']?>">
+                <div class="row">
+                    <div class="column">
+                        <div class="right">
+                        <span class="circle"></span>
+                        <span class="text"><?php echo  $row['gos_name']?></span>
+                        </div>
+                        <img class="dog"  alt="<?php echo  $row['gos_name']?>" src="<?php echo  $row['img']?>">
+                    </div>
+                </div>
+            </label>
+            <?php
+        }
+    }
 }
 ?>
 <!DOCTYPE html>
@@ -41,9 +112,10 @@ function actualFase(){
     <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
-<div class="wrapper">
-    <header>Votació popular del Concurs Internacional de Gossos d'Atura 2023- FASE <span> 1 </span></header>
-    <p class="info"> Podeu votar fins el dia 01/02/2023</p>
+<?php printHTML();?>
+<!--<div class="wrapper">
+    <header>Votació popular del Concurs Internacional de Gossos d'Atura 2023-FASE <?php echo $fase->numFase;?></header>
+    <p class="info"> Podeu votar fins el dia <?php echo $fase->fi;?></p>
 
     <p class="warning"> Ja has votat al gos MUSCLO. Es modificarà la teva resposta</p>
     <div class="poll-area">
@@ -160,7 +232,7 @@ function actualFase(){
     </div>
 
     <p> Mostra els <a href="resultats.html">resultats</a> de les fases anteriors.</p>
-</div>
+</div>-->
 
 </body>
 </html>
