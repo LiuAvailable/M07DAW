@@ -1,0 +1,3 @@
+Fase (num_fase, vots, inici, fi)
+gossos_fase(num_fase, gos_name, vots)
+gos(nom, amo, img, raca)

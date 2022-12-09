@@ -5,8 +5,6 @@ if(isset($_POST['method'])){
         singup();
     }elseif ($_POST['method'] == "signin") {
         login();
-    }elseif($_POST['method'] == "logout") {
-        logOut();
     }
 }
 /**
@@ -15,7 +13,7 @@ if(isset($_POST['method'])){
  * @param string $file
  * @return array or bool
  */
-function llegeix(string $file) : array
+function llegeix(string $file) : array | bool
 {
     $var = [];
     if ( file_exists($file) ) {
@@ -43,11 +41,11 @@ function escriu(array $dades, string $file): void
  */
 function create_sessions(string $email) : void{
     $_SESSION['email'] = $email;
-    $_SESSION['time'] = time();
     $data = llegeix("usuaris.json");
     if (isset($data[$_SESSION['email']])) {
         $_SESSION['nom'] = $data[$_SESSION['email']]['name'];
-    }else{$_SESSION['nom'] = "";}  
+    }else{$_SESSION['nom'] = "";}
+    
 }
 /**
  * funcio per registrar un usuari
@@ -60,17 +58,18 @@ function singup() : void{
             $user_data['password'] = $_POST['pass'];
             $user_data['name'] = $_POST['nom'];
             $data = checkIfUserExists($_POST['email']);
-            if ($data != false){
+            if ($data!= false){
                 $data[$_POST['email']]=$user_data;
                 escriu($data, "usuaris.json");
                 create_sessions($_POST['email']);
                 header('Location: hola.php', true, 302);
             }else{ # else return error already registered
-                header('Location: index.php?reg_error=user_exists', true, 303);
+                $_SESSION['error'] = "L'usuari ja existeix";
+                header('Location: index.php', true, 303);
             }
         }else{
             $_SESSION['error'] = "falten dades";
-            header('Location: index.php?reg_error=data', true, 303);
+            header('Location: index.php', true, 303);
         }
     }
 
@@ -101,14 +100,14 @@ function login() : void{
                     header('Location: hola.php', true, 302);
                 }else{#incorrect pass
                 connectionLogs($_POST['email'], "incorrect_password");
-                header('Location: index.php?login_error=incorrect_pass', true, 303);
+                header('Location: index.php', true, 302);
                 }         
             }else{ #user dont exist
-            #connectionLogs($_POST['email'], "incorrect_user");
-            header('Location: index.php?login_error=incorrect_user', true, 303);
+            connectionLogs($_POST['email'], "incorrect_user");
+            header('Location: index.php', true, 302);
             }
         }else{ # falten dades
-            header('Location: index.php?login_error=data', true, 303);
+            header('Location: index.php', true, 303);
         }
     }
 }
@@ -123,10 +122,5 @@ function connectionLogs(string $user, string $status) : void{
     $connection_data['status']=$status;
     $data[] = $connection_data;
     escriu($data, "conexions.json");
-}
-
-function logOut(){
-    session_unset();
-    header('Location: index.php', true, 302);
 }
 ?>
