@@ -1,3 +1,75 @@
+<?php
+session_start();
+
+# -----------------
+# CONNECT TO DATA BASE
+function connectDB(){
+    try {
+        $dsn = "mysql:host=localhost;dbname=gossos";
+        $conn = new PDO($dsn, "root", "patata");
+    } catch (PDOException $e){echo $e->getMessage();}
+
+    return $conn;
+}
+$conn = connectDB();
+# END CONNETCION DB
+# -----------------
+
+/**
+ * data -> crea una sessio amb la data rebuda per get
+ * nodata -> elimina la sessio de la data
+ */
+function getData(){
+    if(isset($_GET['data'])){
+        $_SESSION['date']=$_GET['data'];
+    }elseif(isset($_GET['nodata'])){unset($_SESSION["date"]);}
+    if(isset($_SESSION['date'])){
+        return $_SESSION['date'];
+    }else{return date("Y-m-d");}
+}
+function printHTML(){
+    global $conn;
+    # get last fase id
+    $sql = $conn->prepare("select max(f.num_fase) as num from gossos_fase as g join fase as f on g.num_fase = f.num_fase where f.fi < ?");
+    $sql->execute([getData()]);
+    $result = $sql->fetch();
+    $maxFase = $result['num'];
+    if($maxFase == null){echo "<h3 style='color:red'>No ha acabat cap fase</h3>";}
+    else{printFasesHTML($maxFase);}
+}
+function printFasesHTML($maxFase){
+    for ($i=1; $i <= $maxFase; $i++) { 
+        echo "<div class='fase'>";
+        echo "<h1> Resultat fase ".strval($i)." </h1>";
+        printFaseHTML($i);
+        echo "</div>";
+    }
+}
+function printFaseHTML($fase){
+    global $conn;
+    $allVots = getAllvots($fase);
+    $sql = $conn->prepare("select f.*,img from gossos_fase as f join gos on gos_name = nom where num_fase = ?");
+    $sql->execute([$fase]);
+    $result = $sql->fetchAll();
+
+    if ($result == null){echo "hi ha hagut un error";}
+    else{
+        foreach($result as $row){
+            $title = $row['gos_name']." ".strval($row['vots']*100/$allVots."%");
+            echo "<img class='dog' alt=".$row['gos_name']." title='{$title}' src=".$row['img'].">";
+        }
+    }
+
+}
+function getAllvots($fase){
+    global $conn;
+    $sql = $conn->prepare("select sum(vots) as allVots from gossos_fase where num_fase = ?");
+    $sql->execute([$fase]);
+    $result = $sql->fetch();
+    return $result['allVots'];
+}
+?>
+
 <!DOCTYPE html>
 <html lang="ca">
 <head>
@@ -10,68 +82,30 @@
 <div class="wrapper large">
     <header>Resultat de la votació popular del Concurs Internacional de Gossos d'Atura 2023</header>
     <div class="results">
-    <h1> Resultat fase 1 </h1>
-    <img class="dog" alt="Musclo" title="Musclo 15%" src="img/g1.png">
-    <img class="dog" alt="Jingo" title="Jingo 45%" src="img/g2.png">
-    <img class="dog" alt="Xuia" title="Xuia 4%" src="img/g3.png">
-    <img class="dog" alt="Bruc" title="Bruc 3%" src="img/g4.png">
-    <img class="dog" alt="Mango" title="Mango 13%" src="img/g5.png">
-    <img class="dog" alt="Fluski" title="Fluski 12 %" src="img/g6.png">
-    <img class="dog" alt="Fonoll" title="Fonoll 5%" src="img/g7.png">
-    <img class="dog" alt="Swing" title="Swing 2%" src="img/g8.png">
-    <img class="dog eliminat" alt="Coloma" title="Coloma 1%" src="img/g9.png">
-
-    <h1> Resultat fase 2 </h1>
-    <img class="dog" alt="Musclo" title="Musclo 44%" src="img/g1.png">
-    <img class="dog" alt="Jingo" title="Jingo 5%" src="img/g2.png">
-    <img class="dog" alt="Xuia" title="Xuia 3%" src="img/g3.png">
-    <img class="dog" alt="Bruc" title="Bruc 5%" src="img/g4.png">
-    <img class="dog eliminat" alt="Mango" title="Mango 2%" src="img/g5.png">
-    <img class="dog" alt="Fluski" title="Fluski 7%" src="img/g6.png">
-    <img class="dog" alt="Fonoll" title="Fonoll 13%" src="img/g7.png">
-    <img class="dog" alt="Swing" title="Swing 21%" src="img/g8.png">
-
-    <h1> Resultat fase 3 </h1>
-    <img class="dog" alt="Musclo" title="Musclo 43%" src="img/g1.png">
-    <img class="dog" alt="Jingo" title="Jingo 5%" src="img/g2.png">
-    <img class="dog" alt="Xuia" title="Xuia 3%" src="img/g3.png">
-    <img class="dog" alt="Bruc" title="Bruc 5%" src="img/g4.png">
-    <img class="dog eliminat" alt="Fluski" title="Fluski 7%" src="img/g6.png">
-    <img class="dog" alt="Fonoll" title="Fonoll 24%" src="img/g7.png">
-    <img class="dog" alt="Swing" title="Swing 13%" src="img/g8.png">
-
-    <h1> Resultat fase 4 </h1>
-    <img class="dog" alt="Musclo" title="Musclo 42%" src="img/g1.png">
-    <img class="dog" alt="Jingo" title="Jingo 10%" src="img/g2.png">
-    <img class="dog eliminat" alt="Xuia" title="Xuia 5%" src="img/g3.png">
-    <img class="dog" alt="Bruc" title="Bruc 6%" src="img/g4.png">
-    <img class="dog" alt="Fonoll" title="Fonoll 25%" src="img/g7.png">
-    <img class="dog" alt="Swing" title="Swing 12%" src="img/g8.png">
-
-    <h1> Resultat fase 5 </h1>
-    <img class="dog" alt="Musclo" title="Musclo 50%" src="img/g1.png">
-    <img class="dog" alt="Jingo" title="Jingo 7%" src="img/g2.png">
-    <img class="dog" alt="Bruc" title="Bruc 13%" src="img/g4.png">
-    <img class="dog eliminat" alt="Fonoll" title="Fonoll 5%" src="img/g7.png">
-    <img class="dog" alt="Swing" title="Swing 25%" src="img/g8.png">
-
-    <h1> Resultat fase 6 </h1>
-    <img class="dog" alt="Musclo" title="Musclo 50%" src="img/g1.png">
-    <img class="dog" alt="Jingo" title="Jingo 16%" src="img/g2.png">
-    <img class="dog eliminat" alt="Bruc" title="Bruc 14%" src="img/g4.png">
-    <img class="dog" alt="Swing" title="Swing 20%" src="img/g8.png">
-
-    <h1> Resultat fase 7 - Semifinal </h1>
-    <img class="dog" alt="Musclo" title="Musclo 34%" src="img/g1.png">
-    <img class="dog eliminat" alt="Jingo" title="Jingo 16%" src="img/g2.png">
-    <img class="dog" alt="Swing" title="Swing 50%" src="img/g8.png">
-
-    <h1> Resultat fase 8 - Final </h1>
-    <img class="dog" alt="Musclo" title="Musclo 75%" src="img/g1.png">
-    <img class="dog eliminat" alt="Swing" title="Swing 25%" src="img/g8.png">
+        <?php printHTML(); ?>
     </div>
 
 </div>
 
 </body>
+<script>
+    window.onload = () => {
+        let fases = document.querySelectorAll('.fase');
+
+        for (let i = 1; i <= fases.length; i++) {
+            let gossos = document.querySelectorAll('.fase:nth-child('+i+')  img');
+            console.log(gossos);
+            let eliminat = [101,''];  
+            document.querySelectorAll('.fase:nth-child('+i+')  img').forEach(img => {
+                vots = img.title.split(' ');
+                vots = vots[1].replace(/\D/g, '')
+                if(vots<eliminat[0]){
+                    eliminat[0] = vots;
+                    eliminat[1] = img.alt;
+                }
+            });
+            document.querySelector(".fase:nth-child("+i+")  img[alt='"+eliminat[1]+"']").classList.add('eliminat');
+        }
+    }
+</script>
 </html>

@@ -74,7 +74,7 @@ function printHTML(){
                     </div>
                 </label>-->
             </div>
-            <p> Mostra els <a href="resultats.html">resultats</a> de les fases anteriors.</p>
+            <p> Mostra els <a href="resultats.php">resultats</a> de les fases anteriors.</p>
         </div>
         <?php
     }
