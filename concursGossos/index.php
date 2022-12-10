@@ -43,7 +43,9 @@ function actualFase(): null | fase{
     }
 }
 function printHTML(){
+    global $conn;
     $fase = actualFase();
+    $fase->getGossosInscrits($conn);
 
     if($fase == null){
         ?>
@@ -72,6 +74,7 @@ function printHTML(){
                     </div>
                 </label>-->
             </div>
+            <p> Mostra els <a href="resultats.html">resultats</a> de les fases anteriors.</p>
         </div>
         <?php
     }
@@ -81,7 +84,7 @@ function printGossosAVotarHTML(Fase $fase){
 
     $sql = $conn->prepare("select f.gos_name,f.num_fase,g.img from gossos_fase as f join gos as g on f.gos_name = g.nom where f.num_fase = ?");
     $sql->execute([$fase->numFase]);
-    $result = $sql->fetch();
+    $result = $sql->fetchAll();
     if ($result == null){
         echo "<p>No s'ha votat en les fases anteriors<p>";
     }else{
@@ -231,8 +234,9 @@ function printGossosAVotarHTML(Fase $fase){
         </form>
     </div>
 
-    <p> Mostra els <a href="resultats.html">resultats</a> de les fases anteriors.</p>
+    
 </div>-->
+    
 
 </body>
 </html>

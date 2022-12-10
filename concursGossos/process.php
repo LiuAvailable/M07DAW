@@ -78,7 +78,7 @@ function newParticipant(){
             checkInput_length(['nom','img','amo','raca']);
             $gos = new Gos($_POST['nom'],$_POST['amo'],$_POST['img'],$_POST['raca']);
             try{
-                $gos->saveDB($conn);
+                $gos->saveDB();
                 pageReturn('admin.php');
             }
             catch (Exception $e){pageReturn_error('admin.php?newParticipant_error=primary');}
@@ -110,7 +110,7 @@ function modifyFase(){
     else{
         $fase->inici = $_POST['Inici'];
         $fase->fi = $_POST['Fi'];
-        $fase->saveDB($conn);
+        $fase->saveDB();
         pageReturn('admin.php');
     }
 }
