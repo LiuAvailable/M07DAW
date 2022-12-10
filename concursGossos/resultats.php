@@ -55,7 +55,7 @@ function printFaseHTML($fase){
     if ($result == null){echo "hi ha hagut un error";}
     else{
         foreach($result as $row){
-            $title = $row['gos_name']." ".strval($row['vots']*100/$allVots."%");
+            $title = $row['gos_name']." ".strval(round($row['vots']*100/$allVots,0)."%");
             echo "<img class='dog' alt=".$row['gos_name']." title='{$title}' src=".$row['img'].">";
         }
     }
@@ -94,12 +94,11 @@ function getAllvots($fase){
 
         for (let i = 1; i <= fases.length; i++) {
             let gossos = document.querySelectorAll('.fase:nth-child('+i+')  img');
-            console.log(gossos);
             let eliminat = [101,''];  
-            document.querySelectorAll('.fase:nth-child('+i+')  img').forEach(img => {
-                vots = img.title.split(' ');
-                vots = vots[1].replace(/\D/g, '')
-                if(vots<eliminat[0]){
+            gossos.forEach(img => {
+                let vots = img.title.split(' ');
+                vots = parseInt(vots[1].replace(/\D/g, ''))
+                if(vots<=eliminat[0]){
                     eliminat[0] = vots;
                     eliminat[1] = img.alt;
                 }

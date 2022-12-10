@@ -24,6 +24,18 @@ if (isset($_POST['newGos'])) {
     modifyParticipant();
 }else if(isset($_POST['fase'])) {
     modifyFase();
+}else if(isset($_POST['esborrarFase'])){
+    borrarFase();
+}else if(isset($_POST['esborrarVots'])){
+    borrarFases();
+}else if(isset($_POST['vot'])){
+    if(isset($_SESSION['freeVots'])){
+        votar();
+    }else{
+        if(createSession()){votar();}
+        else{cambiVot();}
+    }
+    pageReturn('index.php');
 }else{header('Location: index.php', true, 303);}
 
 #------------------
@@ -114,5 +126,44 @@ function modifyFase(){
         pageReturn('admin.php');
     }
 }
+function createSession(){
+    $user = $_SERVER['REMOTE_ADDR'];
+    if(isset($_SESSION['vots'][$user])){
+        return False;
+    }else{
+        $_SESSION['vots'][$user] = $_POST['vot'];
+        return True;
+    }
+}
+function votar(){
+    global $conn;
 
+    $sql = $conn->prepare("update gossos_fase set vots = vots + 1 where gos_name = ? and num_fase = ?");
+    $sql->execute([$_POST['vot'], $_POST['fase_vots']]);
+}
+function cambiVot(){
+    global $conn;
+
+    $sql = $conn->prepare("update gossos_fase set vots = vots - 1 where gos_name = ? and num_fase = ?");
+    $sql->execute([$_SESSION['vots'][$_SERVER['REMOTE_ADDR']], $_POST['fase_vots']]);
+    $_SESSION['vots'][$_SERVER['REMOTE_ADDR']] = $_POST['vot'];
+    votar();
+}
+
+function borrarFase(){
+    global $conn;
+    if ($_POST['esborrarFase'] != null && $_POST['esborrarFase']>0){
+        $sql = $conn->prepare("update gossos_fase set vots = 0 where num_fase = ?");
+        $sql->execute([$_POST['esborrarFase']]);  
+        unset($_SESSION['vots']);
+    }
+    pageReturn('admin.php');
+}
+function borrarFases(){
+    global $conn;
+    $sql = $conn->prepare("update gossos_fase set vots = 0 where num_fase >0");
+    $sql->execute();
+    unset($_SESSION['vots']);
+    pageReturn('admin.php');
+}
 ?>

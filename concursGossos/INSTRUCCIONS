@@ -1,0 +1,8 @@
+moure data -> index.php?data = YYYY-MM-DD
+cancelar la data -> index.php?nodata
+
+Habilitar la votació a més d'un gos -> index.php?freevots
+Cancelar la votació a més d'un gos -> index.php?nofreevots
+
+NO ENS FEM RESPONSABLES DELS ERRORS PROVOCATS AL VIATGAR EN EL TEMPS
+ja que és una eina per facilitar comprovacións no possibilitats del programa

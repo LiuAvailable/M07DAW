@@ -22,7 +22,7 @@ function concursantsHTML(){
     $sql = "select * from gos";
     foreach ($conn->query($sql) as $row) {
         ?>
-        <form  method="post" action="process.php">
+        <form>
             <input type="text" placeholder="Nom" name="nom" value="<?php echo $row['nom'] ?>">
             <input type="text" placeholder="Imatge" name="img" value="<?php echo $row['img'] ?>">
             <input type="text" placeholder="Amo" name="amo" value="<?php echo $row['amo'] ?>">
@@ -104,14 +104,15 @@ function fasesHTML(){
 
         <div class="admin-row">
             <h1> Altres operacions: </h1>
-            <form>
+            <form  method="post" action="process.php">
                 Esborra els vots de la fase
-                <input type="number" placeholder="Fase" value="">
-                <input type="button" value="Esborra">
+                <input type="number" placeholder="Fase" name="esborrarFase" value="">
+                <input type="submit" value="Esborra">
             </form>
-            <form>
+            <form  method="post" action="process.php">
                 Esborra tots els vots
-                <input type="button" value="Esborra">
+                <input type="hidden" name="esborrarVots">
+                <input type="submit" value="Esborra">
             </form>
         </div>
     </div>
