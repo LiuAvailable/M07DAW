@@ -196,3 +196,22 @@ input[type="checkbox"]{
     width: 100%;
     height: 100%; 
 }
+.centrar
+{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+}
+.centrar h1, .centrar input[type="submit"]
+{
+    margin: 10px 0;
+}
+.centrar input[type="submit"]{
+   margin-left: 50%; 
+   transform: translateX(-50%);
+}
+.centrar input:not([type="submit"])
+{
+    margin: 0 5px;
+}

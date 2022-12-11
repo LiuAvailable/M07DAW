@@ -20,6 +20,10 @@ $conn = connectDB();
 # checks the action to do
 if (isset($_POST['newGos'])) {
     newParticipant();
+}else if(isset($_POST['login'])) {
+    login();
+}else if(isset($_POST['signup'])) {
+    signup();
 }else if(isset($_POST['modifica'])) {
     modifyParticipant();
 }else if(isset($_POST['fase'])) {
@@ -72,6 +76,37 @@ function recoverFase(int $id){
 # END GLOBAL FUNCTIONS
 # -------------------
 
+function login(){
+    global $conn;
+    if(isset($_POST['user']) && isset($_POST['pass'])){
+        if($_POST['user']!=null && $_POST['pass']!=null){
+
+            $sql = $conn->prepare("select * from login where user = ? and pass = ?");
+            $sql->execute([$_POST['user'],$_POST['pass']]);
+            $result = $sql->fetchAll();
+            if ($result == null){pageReturn_error('login.php?error');}
+            else{
+                $_SESSION['user']=true;
+                pageReturn('admin.php');
+            }
+        }else{pageReturn_error('login.php?empty');}
+    }else{pageReturn_error('login.php?empty');}
+}
+function signup(){
+    global $conn;
+    if(isset($_POST['user']) && isset($_POST['pass'])){
+        if($_POST['user']!=null && $_POST['pass']!=null){
+            try{
+                $sql = $conn->prepare("insert into login (user,pass) values(?,?)");
+                $sql->execute([$_POST['user'],$_POST['pass']]);
+                pageReturn('admin.php');
+            }catch(Exception $e){
+                pageReturn_error('admin.php?signup=retry');
+            }
+
+        }else{pageReturn_error('admin.php?signup=empty');}
+    }else{pageReturn_error('admin.php?signup=empty');}
+}
 
 function checkNumberParticipants() : bool {
     global $conn;

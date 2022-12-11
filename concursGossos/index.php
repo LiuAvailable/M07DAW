@@ -44,7 +44,18 @@ function actualFase(): null | Fase{
     if($result == null){
         return null;
     }else{
+        createSessionFase($result['num_fase']);
         return new Fase($result['num_fase'], $result['inici'],$result['fi']);
+    }
+}
+function createSessionFase($num){
+    if(isset($_SESSION["fase"])){
+        if($_SESSION["fase"]!=$num){
+            $_SESSION["fase"]=$num;
+            unset($_SESSION["vots"]);
+        }
+    }else{
+        $_SESSION['fase']=$num;
     }
 }
 function printHTML(){

@@ -16,7 +16,8 @@ function connectDB(){
 $conn = connectDB();
 # END CONNETCION DB
 # -----------------
- 
+
+if(!isset($_SESSION['user'])){header('Location:login.php', true, 303);}
 function concursantsHTML(){
     global $conn;
     $sql = "select * from gos";
@@ -49,6 +50,55 @@ function fasesHTML(){
     <?php 
     }
 }
+function printVotsThisFaseHTML(){
+    global $conn;
+    $fase = actualFase();
+    $allVots = getAllvots($fase);
+    if($allVots == 0){$allVots=1;}
+    $sql = $conn->prepare("select f.*,img from gossos_fase as f join gos on gos_name = nom where num_fase = ?");
+    $sql->execute([$fase]);
+    $result = $sql->fetchAll();
+
+    if ($result == null){echo "No hi ha cap fase activa";}
+    else{
+        echo "<h1> Resultat parcial: Fase ".$fase."</h1>";
+        echo "<div class='gossos'>";
+        foreach($result as $row){
+            $title = $row['gos_name']." ".strval(round($row['vots']*100/$allVots,0)."%");
+            echo "<img class='dog' alt=".$row['gos_name']." title='{$title}' src=".$row['img'].">";
+        }
+        echo "</div>";
+    }
+}
+function getAllvots($fase){
+    global $conn;
+    $sql = $conn->prepare("select sum(vots) as allVots from gossos_fase where num_fase = ?");
+    $sql->execute([$fase]);
+    $result = $sql->fetch();
+    return $result['allVots'];
+}
+function getData(){
+    if(isset($_GET['data'])){
+        $_SESSION['date']=$_GET['data'];
+    }elseif(isset($_GET['nodata'])){unset($_SESSION["date"]);}
+    if(isset($_SESSION['date'])){
+        return $_SESSION['date'];
+    }else{return date("Y-m-d");}
+}
+function actualFase(){
+    global $conn;
+
+    $data = getData();
+
+    $sql = $conn->prepare("select * from fase where inici<= ? and fi >= ?");
+    $sql->execute([$data, $data]);
+    $result = $sql->fetch();
+    if($result == null){
+        return null;
+    }else{
+        return $result['num_fase'];
+    }
+}
 ?>
 
 <!DOCTYPE html>
@@ -64,24 +114,14 @@ function fasesHTML(){
     <header>ADMINISTRADOR - Concurs Internacional de Gossos d'Atura</header>
     <div class="admin">
         <div class="admin-row">
-            <h1> Resultat parcial: Fase 1 </h1>
-            <div class="gossos">
-            <img class="dog" alt="Musclo" title="Musclo 15%" src="img/g1.png">
-            <img class="dog" alt="Jingo" title="Jingo 45%" src="img/g2.png">
-            <img class="dog" alt="Xuia" title="Xuia 4%" src="img/g3.png">
-            <img class="dog" alt="Bruc" title="Bruc 3%" src="img/g4.png">
-            <img class="dog" alt="Mango" title="Mango 13%" src="img/g5.png">
-            <img class="dog" alt="Fluski" title="Fluski 12 %" src="img/g6.png">
-            <img class="dog" alt="Fonoll" title="Fonoll 5%" src="img/g7.png">
-            <img class="dog" alt="Swing" title="Swing 2%" src="img/g8.png">
-            <img class="dog eliminat" alt="Coloma" title="Coloma 1%" src="img/g9.png"></div>
+            <?php printVotsThisFaseHTML(); ?>
         </div>
         <div class="admin-row">
             <h1> Nou usuari: </h1>
-            <form>
-                <input type="text" placeholder="Nom">
-                <input type="password" placeholder="Contrassenya">
-                <input type="button" value="Crea usuari">
+            <form action='process.php' method='post'>
+                <input type="text" placeholder="Nom" name='user'>
+                <input type="password" placeholder="Contrassenya" name='pass'>
+                <input type="submit" name='signup' value="Crea usuari">
             </form>
         </div>
         <div class="admin-row">
@@ -97,7 +137,6 @@ function fasesHTML(){
                 <input type="text" placeholder="Imatge" name="img">
                 <input type="text" placeholder="Amo" name="amo">
                 <input type="text" placeholder="Raça" name="raca">
-                <!--<input type="button" value="Afegeix">-->
                 <input type="submit" value="afegeix" name="newGos">
             </form>
         </div>
