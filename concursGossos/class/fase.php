@@ -31,14 +31,14 @@ class Fase {
 		$sql = "select count(nom) from gos";
 		$result = $conn->query($sql);
 		$num = $result->fetch();
-		if ($num == 9) {
+		#if ($num == 9) {
 		$sql = "select nom from gos";
-			$result = $conn->query($sql);
-			while($row = $result->fetch()){
-				array_push($this->gossosInscrits, $row['nom']);
-			}
-			$this->saveDBInscrivedGos();
+		$result = $conn->query($sql);
+		while($row = $result->fetch()){
+			array_push($this->gossosInscrits, $row['nom']);
 		}
+		$this->saveDBInscrivedGos();
+		#}
 	}
 	 
 	public function selfAutoGenerateInscrivedGos($numFase){

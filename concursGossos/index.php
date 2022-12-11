@@ -7,7 +7,7 @@ require_once('class/fase.php');
 function connectDB(){
     try {
         $dsn = "mysql:host=localhost;dbname=gossos";
-        $conn = new PDO($dsn, "king_Liu", "Bhkl55_piu");
+        $conn = new PDO($dsn, "king_Liu", "Bhkl55_piu");     
     } catch (PDOException $e){echo $e->getMessage();}
 
     return $conn;
@@ -61,7 +61,6 @@ function createSessionFase($num){
 function printHTML(){
     global $conn;
     $fase = actualFase();
-
     if($fase == null){
         ?>
         <div class="wrapper">
