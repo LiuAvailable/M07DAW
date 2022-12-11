@@ -8,7 +8,7 @@ session_start();
 function connectDB(){
     try {
         $dsn = "mysql:host=localhost;dbname=gossos";
-        $conn = new PDO($dsn, "root", "patata");
+        $conn = new PDO($dsn, "king_Liu", "Bhkl55_piu");
     } catch (PDOException $e){echo $e->getMessage();}
 
     return $conn;

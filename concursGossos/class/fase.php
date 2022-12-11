@@ -35,14 +35,14 @@ class Fase {
 		$sql = "select count(nom) from gos";
 		$result = $conn->query($sql);
 		$num = $result->fetch();
-		#if ($num == 9) {
+		if ($num == 9) {
 		$sql = "select nom from gos";
-		$result = $conn->query($sql);
-		while($row = $result->fetch()){
-			array_push($this->gossosInscrits, $row['nom']);
-		}
-		$this->saveDBInscrivedGos();
-		#}else{header('Location: admin.php?fase_error=few_gossos', true, 303);}
+			$result = $conn->query($sql);
+			while($row = $result->fetch()){
+				array_push($this->gossosInscrits, $row['nom']);
+			}
+			$this->saveDBInscrivedGos();
+		}else{header('Location: admin.php?fase_error=few_gossos', true, 303);}
 	}
 	 
 	public function selfAutoGenerateInscrivedGos($numFase){
