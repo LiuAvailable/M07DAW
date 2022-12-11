@@ -8,7 +8,8 @@ require_once('class/fase.php');
 function connectDB(){
     try {
         $dsn = "mysql:host=localhost;dbname=gossos";
-        $conn = new PDO($dsn, "king_Liu", "Bhkl55_piu");
+        #$conn = new PDO($dsn, "king_Liu", "Bhkl55_piu");
+        $conn = new PDO($dsn, "root", "patata");
     } catch (PDOException $e){echo $e->getMessage();}
 
     return $conn;

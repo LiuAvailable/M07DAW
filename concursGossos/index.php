@@ -7,7 +7,8 @@ require_once('class/fase.php');
 function connectDB(){
     try {
         $dsn = "mysql:host=localhost;dbname=gossos";
-        $conn = new PDO($dsn, "king_Liu", "Bhkl55_piu");
+        #$conn = new PDO($dsn, "king_Liu", "Bhkl55_piu");
+        $conn = new PDO($dsn, "root", "patata");
     } catch (PDOException $e){echo $e->getMessage();}
 
     return $conn;
@@ -91,7 +92,8 @@ function printGossosAVotarHTML(Fase $fase){
     $sql->execute([$fase->numFase]);
     $result = $sql->fetchAll();
     if ($result == null){
-        echo "<p>No s'ha votat en les fases anteriors<p>";
+        if($fase->numFase == 1){echo "<p>No hi ha gossos inscrits<p>";}
+        else{echo "<p>No s'ha votat en les fases anteriors<p>";}
     }else{
         foreach($result as $row){
             ?>
