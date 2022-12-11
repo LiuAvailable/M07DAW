@@ -23,11 +23,7 @@ class Fase {
 		if ($result == null){
 			if($this->numFase == 1){$this->setInscrivedGos($this->numFase);}
 			else{$this->selfAutoGenerateInscrivedGos($this->numFase);}
-		}#else{
-		#	foreach( $result as $row){
-		#		array_push($this->gossosInscrits, $row['gos_name']);
-		#	}
-		#}
+		}
 	}
 
 	public function setInscrivedGos($numFase){
@@ -42,7 +38,7 @@ class Fase {
 				array_push($this->gossosInscrits, $row['nom']);
 			}
 			$this->saveDBInscrivedGos();
-		}else{header('Location: admin.php?fase_error=few_gossos', true, 303);}
+		}
 	}
 	 
 	public function selfAutoGenerateInscrivedGos($numFase){

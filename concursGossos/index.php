@@ -61,7 +61,6 @@ function createSessionFase($num){
 function printHTML(){
     global $conn;
     $fase = actualFase();
-    $fase->getGossosInscrits($conn);
 
     if($fase == null){
         ?>
@@ -70,6 +69,7 @@ function printHTML(){
         </div>
         <?php
     }else{
+        $fase->getGossosInscrits($conn);
         ?>
         <div class="wrapper">
             <header>Votació popular del Concurs Internacional de Gossos d'Atura 2023-FASE <?php echo $fase->numFase;?></header>
