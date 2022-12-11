@@ -12,11 +12,13 @@ class Gos {
 		$this->raca = $raca;
 	}
 
-	public function saveDB($conn){
+	public function saveDB(){
+		global $conn;
 		$sql = $conn->prepare("insert into gos(nom, amo, img, raca) values (?,?,?,?)");
 		$sql->execute([$this->nom,$this->amo,$this->img,$this->raca]);
 	}
-	public function updateDB($conn):bool{
+	public function updateDB():bool{
+		global $conn;
 		$sql = $conn->prepare("update gos set amo=?,img=?,raca=? where nom = '{$this->nom}'");
 		$sql->execute([$this->amo,$this->img,$this->raca]);
 		if($sql->rowCount()==0){return False;}
