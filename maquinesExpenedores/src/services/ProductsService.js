@@ -10,7 +10,17 @@ const getProduct = (idProducte) => {
     return product;
 }
 
+const addProduct = (newProduct) => {
+    try {
+        const createdProduct = producte.addProduct(newProduct);
+        return createdProduct;
+    } catch (error) {
+        throw error;
+    }
+}
+
 module.exports = {
     getAllProducts,
-    getProduct
+    getProduct,
+    addProduct
 };

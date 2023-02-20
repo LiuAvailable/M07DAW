@@ -9,5 +9,6 @@ router.route("/").get((req, res) => {
 
 router.get("/productes", productsController.getProductes);
 router.get("/productes/:id", productsController.getProducte);
+router.post("/productes", productsController.postProduct)
 
 module.exports = router;
