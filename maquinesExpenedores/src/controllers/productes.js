@@ -20,7 +20,6 @@ const postProduct = (req, res) => {
 
     if(nom && categoria && tipus && preu){
         const newProduct = {nom:nom, tipus:tipus, preu:preu, categoria:categoria}
-        productsService.addProduct(newProduct);
         try{
             const product = productsService.addProduct(newProduct);
             res.send({status: "OK", data: product});
@@ -41,7 +40,6 @@ const modifyProduct = (req, res) => {
 
     if(nom && categoria && tipus && preu){
         const newProduct = {nom:nom, tipus:tipus, preu:preu, categoria:categoria}
-        productsService.addProduct(newProduct);
         try{
             const product = productsService.modifyProduct(newProduct);
             res.send({status: "OK", data: product});
@@ -53,9 +51,17 @@ const modifyProduct = (req, res) => {
     }else res.send({ status: "ERROR", data:"Falten dades del producte"})
 }
 
+const deleteProduct = (req, res) => {
+    if(req.params.id !== undefined) {
+        const productes = productsService.removeProduct(req.params.id);
+        res.send({ status: "OK", data: productes });
+    }else res.send({ status: "ERROR", data:"Falta l'id del producte"})
+}
+
 module.exports = {
     getProductes,
     getProducte,
     postProduct,
-    modifyProduct
+    modifyProduct,
+    deleteProduct
 };

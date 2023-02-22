@@ -37,9 +37,24 @@ const modifyProduct = (newProduct) => {
   return updatedWorkout;
 };
 
+const removeProduct = (nom) => {
+  console.log('a')
+  const indexForDeletion = DB.Producte.findIndex(
+    (producte) => producte.nom === nom
+  );
+  if (indexForDeletion === -1) {
+    return;
+  }
+  console.log(indexForDeletion)
+  DB.producte.splice(indexForDeletion, 1);
+  console.log(DB)
+  saveToDatabase(DB);
+}
+
 module.exports = { 
     getAllProducts,
     getProduct,
     addProduct,
-    modifyProduct
+    modifyProduct,
+    removeProduct
 };

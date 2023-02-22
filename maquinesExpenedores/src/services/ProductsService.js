@@ -27,9 +27,19 @@ const modifyProduct = (newProduct) => {
     }
 }
 
+const removeProduct = (nom) => {
+    try {
+        const createdProduct = producte.removeProduct(nom);
+        return createdProduct;
+    } catch (error) {
+        return error;
+    }
+}
+
 module.exports = {
     getAllProducts,
     getProduct,
     addProduct,
-    modifyProduct
+    modifyProduct,
+    removeProduct
 };
