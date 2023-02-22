@@ -15,12 +15,21 @@ const addProduct = (newProduct) => {
         const createdProduct = producte.addProduct(newProduct);
         return createdProduct;
     } catch (error) {
-        throw error;
+        return error;
+    }
+}
+const modifyProduct = (newProduct) => {
+    try {
+        const createdProduct = producte.modifyProduct(newProduct);
+        return createdProduct;
+    } catch (error) {
+        return error;
     }
 }
 
 module.exports = {
     getAllProducts,
     getProduct,
-    addProduct
+    addProduct,
+    modifyProduct
 };

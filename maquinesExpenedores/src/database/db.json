@@ -16,7 +16,7 @@
   "Producte": [
     {
       "nom": "Lays",
-      "tipus": "",
+      "tipus": "a",
       "preu": "1.99",
       "categoria": "Patates"
     },
@@ -37,6 +37,12 @@
       "tipus": "a",
       "preu": "20",
       "categoria": "Refresc"
+    },
+    {
+      "nom": "Pringles",
+      "tipus": "a",
+      "preu": "1.99",
+      "categoria": "Patates"
     }
   ],
   "Estoc": [

@@ -8,7 +8,6 @@ const getProduct = (idProduct) => {
     return DB.Producte.find(p => p.nom === idProduct);
 }
 const addProduct = (newProduct) => {
-    console.log(newProduct);
     try {
       const isAlreadyAdded =
         DB.Producte.findIndex((producte) => producte.nom === newProduct.nom) > -1;
@@ -24,9 +23,23 @@ const addProduct = (newProduct) => {
     } catch (error) {
       throw { status: error?.status || 500, message: error?.message || error };
     }
-  };
+};
+
+const modifyProduct = (newProduct) => {
+  const indexForUpdate = DB.Producte.findIndex(
+    (producte) => producte.nom === newProduct.nom
+  );
+  if (indexForUpdate === -1) {
+    return;
+  }
+  DB.Producte[indexForUpdate] = newProduct;
+  saveToDatabase(DB);
+  return updatedWorkout;
+};
+
 module.exports = { 
     getAllProducts,
     getProduct,
-    addProduct
+    addProduct,
+    modifyProduct
 };
