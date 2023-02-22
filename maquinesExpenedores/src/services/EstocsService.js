@@ -36,10 +36,22 @@ const removeEstoc = (nom) => {
     }
 }
 
+const getAvailableEstocs = () => {
+    const allEstocs = estoc.getAvailableEstocs();
+    return allEstocs;
+}
+
+const getEstocsVenguts = (dia) => {
+    const allEstocs = estoc.getEstocsVenguts(dia);
+    return allEstocs;
+}
+
 module.exports = {
     getAllEstocs,
     getEstoc,
     addEstoc,
     modifyEstoc,
-    removeEstoc
+    removeEstoc,
+    getAvailableEstocs,
+    getEstocsVenguts
 };

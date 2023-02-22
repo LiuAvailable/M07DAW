@@ -2,15 +2,20 @@
 const estocsService = require("../services/EstocsService");
 
 const getEstocs = (req , res) =>{
-    const estocs = estocsService.getAllEstocs();
+    let estocs;
+    if(req.query.disponible !== undefined && req.query.disponible !== null) estocs = estocsService.getAvailableEstocs()
+    else if(req.query.venda) estocs = estocsService.getEstocsVenguts(req.query.venda)
+    else estocs = estocsService.getAllEstocs();
     res.send({ status: "OK", data: estocs });
 }
+
 const getEstoc = (req , res) =>{
     if(req.params.id !== undefined) {
         const estocs = estocsService.getEstoc(req.params.id);
         res.send({ status: "OK", data: estocs });
     }else res.send({ status: "ERROR", data:"Falta l'id"})
 }
+
 const postEstoc = (req, res) => {
     const { body } = req;
     const nom = body.nom;

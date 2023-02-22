@@ -51,10 +51,20 @@ const removeEstoc = (nom) => {
   saveToDatabase(DB);
 }
 
+const getAvailableEstocs = () => {
+    return DB.Estoc.filter(estoc => (estoc.venda === 0 || estoc.venda === "") && new Date(estoc.caducitat) > new Date());
+}
+
+const getEstocsVenguts = (dia) => {
+    return DB.Estoc.filter(estoc => (estoc.venda === dia));
+}
+
 module.exports = { 
     getAllEstocs,
     getEstoc,
     addEstoc,
     modifyEstoc,
-    removeEstoc
+    removeEstoc,
+    getAvailableEstocs,
+    getEstocsVenguts
 };
