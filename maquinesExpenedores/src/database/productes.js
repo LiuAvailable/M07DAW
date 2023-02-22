@@ -46,8 +46,8 @@ const removeProduct = (nom) => {
     return;
   }
   console.log(indexForDeletion)
-  DB.producte.splice(indexForDeletion, 1);
-  console.log(DB)
+  console.log(DB.Producte[indexForDeletion])
+  DB.Producte.splice(indexForDeletion, 1);
   saveToDatabase(DB);
 }
 
