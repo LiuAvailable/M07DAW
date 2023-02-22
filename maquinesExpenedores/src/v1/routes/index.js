@@ -3,6 +3,7 @@ const router = express.Router();
 
 const productsController = require("../../controllers/productes");
 const estocsController = require("../../controllers/estocs");
+const maquinesController = require("../../controllers/maquines");
 
 router.route("/").get((req, res) => {
   res.send(`<h2>Hello from ${req.baseUrl}</h2>`);
@@ -19,5 +20,8 @@ router.get("/estocs/:id", estocsController.getEstoc);
 router.post("/estocs", estocsController.postEstoc);
 router.patch("/estocs", estocsController.modifyEstoc);
 router.delete("/estocs/:id", estocsController.deleteEstoc);
+
+router.get("/maquines", maquinesController.getMaquines);
+router.get("/maquines/:id", maquinesController.getMaquina);
 
 module.exports = router;
