@@ -57,6 +57,28 @@
         }
       }
     },
+    "/api/v1/productes?venda=[DATA-VENDA]": {
+      "get": {
+        "description": "",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/v1/productes?disponible": {
+      "get": {
+        "description": "",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
     "/api/v1/productes/{id}": {
       "get": {
         "description": "",

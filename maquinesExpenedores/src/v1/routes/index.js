@@ -10,6 +10,8 @@ router.route("/").get((req, res) => {
 });
 
 router.get("/productes", productsController.getProductes);
+router.get("/productes?venda=[DATA-VENDA]", productsController.getProductes);
+router.get("/productes?disponible", productsController.getProductes);
 router.get("/productes/:id", productsController.getProducte);
 router.post("/productes", productsController.postProduct);
 router.patch("/productes", productsController.modifyProduct);
