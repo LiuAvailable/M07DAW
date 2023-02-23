@@ -18,6 +18,8 @@ router.patch("/productes", productsController.modifyProduct);
 router.delete("/productes/:id", productsController.deleteProduct);
 
 router.get("/estocs", estocsController.getEstocs);
+router.get("/estocs?venda=[DATA-VENDA]", productsController.getProductes);
+router.get("/estocs?disponible", productsController.getProductes);
 router.get("/estocs/:id", estocsController.getEstoc);
 router.post("/estocs", estocsController.postEstoc);
 router.patch("/estocs", estocsController.modifyEstoc);
