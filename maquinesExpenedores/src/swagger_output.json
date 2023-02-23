@@ -159,6 +159,28 @@
         }
       }
     },
+    "/api/v1/estocs?venda=[DATA-VENDA]": {
+      "get": {
+        "description": "",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/v1/estocs?disponible": {
+      "get": {
+        "description": "",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
     "/api/v1/estocs/{id}": {
       "get": {
         "description": "",
