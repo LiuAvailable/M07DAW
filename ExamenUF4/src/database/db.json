@@ -1,0 +1,47 @@
+{
+  "TASK": [
+    {
+      "id": "1",
+      "title": "Activitat 1",
+      "user": "2",
+      "description": "descripcio 1",
+      "status": "TODO",
+      "createdAt": "2020-02-23",
+      "updatedAt": "2022-02-23"
+    },
+    {
+      "id": "3",
+      "title": "Activitat 3",
+      "user": "1",
+      "description": "descripcio 3",
+      "status": "TODO",
+      "createdAt": "2022-02-23",
+      "updatedAt": "2022-02-23"
+    },
+    {
+      "id": "4",
+      "user": "2",
+      "title": "Primera Taska",
+      "description": "descripcio de la primera taska",
+      "status": "DOING",
+      "createdAt": "2023-02-23T17:35:28.451Z",
+      "updatedAt": "2023-02-23T18:11:03.213Z"
+    }
+  ],
+  "USUARI": [
+    {
+      "id": "1",
+      "username": "Joan",
+      "fullName": "Joan Pescador",
+      "createdAt": "2022-02-23",
+      "updatedAt": "2022-02-23"
+    },
+    {
+      "id": "2",
+      "username": "Liu",
+      "fullname": "Liu Santana",
+      "createdAt": "2023-02-23T17:47:48.784Z",
+      "updatedAt": "2023-02-23T17:47:48.784Z"
+    }
+  ]
+}
