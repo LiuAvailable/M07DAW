@@ -26,5 +26,17 @@ async function getCourse(auth, courseName) {
     return id;
 }
 
-module.exports = { getCourse }
+/**
+ * return course id
+ */
+async function getAllCourse(auth) {
+  const classroom = google.classroom({ version: 'v1', auth });
+
+  let res = await classroom.courses.list({
+    pageSize: 0,
+  });
+  return res.data.courses
+}
+
+module.exports = { getCourse, getAllCourse }
 

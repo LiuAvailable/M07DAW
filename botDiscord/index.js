@@ -1,15 +1,16 @@
-const ping = require('./commands/ping');
 const course = require('./commands/course');
 const tasks = require('./commands/tasks');
 const register = require('./commands/register');
 const mark = require('./commands/mark');
 
 const { getUser, authorize } = require('./api/classroom/index');
-const { getTasks, getMark } = require('./api/classroom/tasks');
-const { getCourse } = require('./api/classroom/courses');
+const { getTasks, getMark, getMarkAuto } = require('./api/classroom/tasks');
+const { getCourse, getAllCourse } = require('./api/classroom/courses');
 
 const DB = require("./database/students.json");
-const { saveToDatabase } = require("./database/utils.js");
+const CONFIG = require("./config.json");
+
+const { saveToDatabase, setConfig } = require("./database/utils.js");
 
 
 const {REST} = require('@discordjs/rest');
@@ -36,8 +37,13 @@ const getCourseCommand = (interaction) => {
     authorize()
     .then(auth => getCourse(auth, interaction.options.getString('nom')))
     .then(course => {
-        if(course != 'error') interaction.editReply(course);
-        else interaction.editReply('el curs no existeix')
+        if(course != 'error') {
+            try{
+                CONFIG.CLASS_ID = course;
+                setConfig(CONFIG)
+                interaction.editReply("El curs s'ha configurat correctament");
+            } catch(e){interaction.editReply("Hi ha hagut un problema al configurar el curs")}
+        } else interaction.editReply('el curs no existeix')
     })
     .catch(console.error);
 } 
@@ -69,21 +75,24 @@ const getAllTasksCommand = (interaction) => {
  * regsitrar un usuari
  */
 const saveUserCommand = (interaction) => {
-    authorize()
-    .then(auth => getUser(auth, interaction.options.getString('correu')))
-    .then(user => {
-        if(user != undefined){
-            const author = interaction.user.id;
-            if(!checkIfUserExists(author)){
-                if(!checkIfEmailExists(interaction.options.getString('correu'))){
-                    DB.STUDENTS.push({discord:author, classroom:interaction.options.getString('correu')})
-                    saveToDatabase(DB);
-                    interaction.editReply("T'has registrat correctament!!\nDisfruta les pràctiques màquina.");
-                } else interaction.editReply('NO ROBIS CORREUS, ja hi ha un usuari registrat amb aquest correu')
-            } else interaction.editReply('Se que tens moltes ganes de treballar, pero amb un cop que fassis la pràctica en fas prou. \nJa estas registrat')
-        } else interaction.editReply(`Aquest correu no existeix en el classroom, assegure't que estas en el classroom i que has escrit el correu bé`)
-
-    }) 
+    if(CONFIG.CLASS_ID){
+        authorize()
+        .then(auth => getUser(auth, interaction.options.getString('correu'),CONFIG.CLASS_ID))
+        .then(user => {
+            if(user != undefined){
+                const author = interaction.user.id;
+                if(!checkIfUserExists(author)){
+                    if(!checkIfEmailExists(interaction.options.getString('correu'))){
+                        try{
+                            DB.STUDENTS.push({discord:author, classroom:interaction.options.getString('correu'), classroomId:user})
+                            saveToDatabase(DB);
+                            interaction.editReply("T'has registrat correctament!!\nDisfruta les pràctiques màquina.");
+                        } catch(e){interaction.editReply("Hi ha hagut un problema al registrar")}
+                    } else interaction.editReply('NO ROBIS CORREUS, ja hi ha un usuari registrat amb aquest correu')
+                } else interaction.editReply('Se que tens moltes ganes de treballar, pero amb un cop que fassis la pràctica en fas prou. \nJa estas registrat')
+            } else interaction.editReply(`Aquest correu no existeix en el classroom, assegure't que estas en el classroom i que has escrit el correu bé`)
+        })
+    } else { interaction.editReply('El curs no esta configurat correctament, utilitza la comanda /course')}
 }
 
 // valida si un usuari existeix
@@ -99,7 +108,6 @@ const checkIfEmailExists = (mail) => {
  * Funcio per agafar la nota d'una tasca
  */
 const getMarkCommand = (interaction) => {
-
 
     if(checkIfUserExists(interaction.user.id)){
         const classroomUser = DB.STUDENTS.find(st => st.discord == interaction.user.id).classroom
@@ -140,12 +148,50 @@ const getMarkCommand = (interaction) => {
     } else interaction.editReply('No estas registrat!!')
 }
 
+const sendMessage = async (result, userId) => {
+    try{
+        const user = await client.users.fetch(userId).catch(() => null);
+        await user.send(result).catch((e) => {
+            console.log(e)
+        });
+    } catch(e) {console.log(e)}
+}
 
 async function main() {
-    const commands = [ ping.data, course.data, tasks.tasks, register.data, mark.data ];
+    const commands = [ course.data, tasks.tasks, register.data, mark.data ];
 
     try {
         console.log('Started refreshing application (/) commands.');
+        
+        setInterval(async () => {
+            authorize()
+                .then(auth => getAllCourse(auth))
+                .then(courses => {
+                    courses.forEach(c => {
+                        authorize()
+                            .then(auth => getTasks(auth, c.id))
+                            .then(tasks => {
+                                if(tasks.length > 0){
+                                    tasks.forEach(t => {
+                                        authorize()
+                                        .then(auth => getMarkAuto(auth, c.id, t.id))
+                                        .then(users => {
+                                            users.forEach(u => {
+                                                if(DB.STUDENTS.some(student => student.classroomId === u.user)){
+                                                    const student = DB.STUDENTS.find(s => s.classroomId === u.user);
+                                                    const msg = `S'ha posat nota a la taska ${t.title} de l'assignatura ${c.name}.\nLa teva puntuació és de ${u.mark}/${t.maxPoints}`
+                                                    sendMessage(msg, student.discord)
+                                                }
+                                            })
+                                        })
+                                    })
+                                }
+                            })
+                        .catch(console.error);
+                    })
+                })
+        }, 300000)
+
         await rest.put(Routes.applicationCommands(config.APP_ID), { body: commands });
 
         client.on('interactionCreate', async interaction => {
@@ -156,9 +202,6 @@ async function main() {
             await interaction.deferReply({ ephemeral: true });
 
             switch (commandName){
-                case 'ping':
-                    await ping.execute(interaction);
-                    break;
                 case 'course':
                     getCourseCommand(interaction);
                     break;
@@ -174,9 +217,7 @@ async function main() {
                 case 'taskspendent':
                     getTasksPendentCommand(interaction)
                     break;
-
             }
-
         });
 
         client.login(config.BOT_TOKEN);

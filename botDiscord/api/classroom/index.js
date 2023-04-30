@@ -77,12 +77,14 @@ async function authorize() {
 /**
  * gets the user id
  */
-async function getUser(auth, email){
+async function getUser(auth, email, curs){
   const classroom = google.classroom({ version: 'v1', auth });
 
   const res = await classroom.courses.students.list({
-    courseId: 599839024478
+    courseId: curs
   })
+
+  console.log(res.data.students[0])
 
   let userId;
   res.data.students.forEach(student => {

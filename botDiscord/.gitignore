@@ -1,0 +1,4 @@
+/node_modules
+/config.json
+/api/classroom/credentials.json
+/api/classroom/token.json
